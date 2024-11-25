@@ -42,36 +42,108 @@ let arr = [
 ];
 
 let form = document.querySelector('.form');
-let seatsContainer = document.querySelector(".seats");
+
+
 
 
 function bookSeat(seatNumber){
     seatNumber = parseInt(seatNumber);
     form.classList.remove('hidden');
-
     let bookNow = document.querySelector('#book');
     bookNow.addEventListener('click',()=>{
+        let nameInput = document.getElementById('name');
+        let emailInput = document.getElementById('email');
+        let phoneInput = document.getElementById('phone');
+        arr[seatNumber - 1 ] = {
+            seatNumber : seatNumber,
+            name : nameInput.value ,
+            email : emailInput.value ,
+            phone : phoneInput.value,
+            status:true,
+        }
+        nameInput.value = '';
+        emailInput.value = '';
+        phoneInput.value = '';
+        renderSeats();
         form.classList.add('hidden');
     })
-
 }
+
+
+
+
+let seatsContainer = document.querySelector(".seats");
+
 renderSeats = () => {
-    arr.forEach(item => {
+    seatsContainer.innerHTML=""
+    arr.map((item) => {
         let button = document.createElement('button');
         button.classList.add("seat");
-        button.innerText = (item.seatNumber);
-        button.addEventListener('click' , (e)=>{
+        button.innerText = item.seatNumber;
+
+        if(item.status === true){
+            button.classList.add('seat-booked');
+            setTimeout(()=>{
+                button.innerText = 'x';
+                button.classList.remove('seat-booked');
+                button.classList.add('seat-cancel')
+                button.addEventListener('click',()=>{
+                    let cancelPop = document.querySelector('#cancel-pop');
+                    let cancelYes = document.querySelector('#cancel-yes');
+                    let cancelNo = document.querySelector('#cancel-no');
+                    cancelPop.classList.remove('hidden');
+                    cancelYes.addEventListener('click',()=>{
+                        button.classList.remove('seat-booked','seat-cancel');
+                        button.innerText = item.seatNumber;
+                        cancelPop.classList.add('hidden');
+
+                    })
+
+                    cancelNo.addEventListener('click',()=>{
+                        cancelPop.classList.add('hidden');
+                    })
+
+
+                })
+
+            },2000)
+
+            // button.setAttribute('disabled' , true);
+
+        }
+
+        else{
+
+            button.addEventListener('click' , (e)=>{
             let seatNumber = e.target.innerText;
-            bookSeat(seatNumber);
+            bookSeat(seatNumber)
 
         });
+        }
+
         seatsContainer.appendChild(button);
+
     });
 
 };
 
 
-
-
-
 renderSeats();
+
+showBookedSeats=()=>{
+
+    let showBookedSeat = document.createElement('div');
+    showBookedSeat.classList.add('showBookedSeat')
+    showBookedSeat.innerHTML = `<div class="showBookedSeats">
+          <div class="showBookedSeat">
+            <p>14 : </p>
+            <p> </p>
+          </div>
+  </div>`
+  let showBookedSeats = document.querySelector('.showBookedSeats')
+  showBookedSeats.appendChild('showBookedSeat');
+
+}
+let ee = document.querySelector('#ee');
+ee.addEventListener('click',showBookedSeats())
+
